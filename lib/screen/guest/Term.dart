@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class TermScreen extends StatefulWidget {
-  const TermScreen({Key? key}) : super(key: key);
+  // Callback pour passer à l'étape suivante (ex: vers PasswordScreen)
+  final Function(int)? onChangedStep;
+
+  const TermScreen({Key? key, this.onChangedStep}) : super(key: key);
 
   @override
   State<TermScreen> createState() => _TermScreenState();
@@ -120,23 +123,23 @@ class _TermScreenState extends State<TermScreen> {
               _buildSectionTitle("13. Contact"),
               _buildParagraph("Pour toute question ou réclamation : support@birisvpn.com"),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 40),
 
-              // Bouton moderne et fonctionnel
+              // Bouton Accepter & Continuer → passe à l'étape suivante
               SizedBox(
                 width: double.infinity,
+                height: 56,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    elevation: 3,
                   ),
                   onPressed: () {
-                    // Action quand l'utilisateur accepte les CGU
-                    print("CGU acceptées !");
-                    Navigator.pop(context); // ou aller à l'écran suivant
+                    // Passe à l'écran suivant (PasswordScreen = index 2)
+                    widget.onChangedStep?.call(2);
                   },
                   child: const Text(
                     "ACCEPTER & CONTINUER",
@@ -149,7 +152,7 @@ class _TermScreenState extends State<TermScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
             ],
           ),
         ),

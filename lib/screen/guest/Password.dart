@@ -1,94 +1,75 @@
 import 'package:flutter/material.dart';
 
-class AuthScreen extends StatefulWidget {
-  // Correction : syntaxe correcte avec ? pour nullable + required si tu veux forcer
+class PasswordScreen extends StatefulWidget {
+  // Callback pour passer à l'étape suivante (ex: écran principal après connexion)
   final Function(int)? onChangedStep;
 
-  const AuthScreen({Key? key, this.onChangedStep}) : super(key: key);
+  const PasswordScreen({Key? key, this.onChangedStep}) : super(key: key);
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
-  final _formKey = GlobalKey<FormState>();
+class _PasswordScreenState extends State<PasswordScreen> {
+  bool _isSecret = true;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Auth VPN'),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          titleSpacing: 0.0,
           elevation: 0,
-          foregroundColor: Colors.black,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Titre principal
-                RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      color: Colors.black,
-                      height: 1.2,
-                    ),
-                    children: [
-                      TextSpan(text: 'BIENVENUE SUR\n'),
-                      TextSpan(
-                        text: 'LA PLATEFORME DE SÉCURISATION\nDE COMMUNICATION\n',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30.0,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ':BIRISVPN.',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32.0,
-                        ),
-                      ),
-                    ],
+                Text(
+                  'Mot de passe'.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
+                const SizedBox(height: 50.0),
 
-                const SizedBox(height: 16.0),
-
-                const Text(
-                  'Communiquer en toute sécurité.',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.black54,
-                  ),
-                ),
-
-                const SizedBox(height: 40.0),
-
-                // Formulaire
                 Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Text(
-                        'Entrer votre Email',
-                        style: TextStyle(fontSize: 16),
+                        'Entrer votre mot de passe',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
                       ),
                       const SizedBox(height: 10.0),
 
-                      // Champ Email
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        obscureText: _isSecret,
                         decoration: InputDecoration(
-                          hintText: 'Ex: john@gmail.com',
-                          prefixIcon: const Icon(Icons.email_outlined),
+                          hintText: 'Ex: ghD4M@',
+                          suffixIcon: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isSecret = !_isSecret;
+                              });
+                            },
+                            child: Icon(
+                              _isSecret ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
@@ -99,21 +80,25 @@ class _AuthScreenState extends State<AuthScreen> {
                               width: 2.0,
                             ),
                           ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 18,
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez saisir votre email';
+                            return 'Veuillez saisir votre mot de passe';
                           }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                            return 'Email invalide';
+                          if (value.length < 6) {
+                            return 'Minimum 6 caractères';
                           }
                           return null;
                         },
                       ),
 
-                      const SizedBox(height: 30.0),
+                      const SizedBox(height: 40.0),
 
-                      // Bouton Continuer
+                      // Bouton CONTINUER → passe à l'étape suivante
                       SizedBox(
                         height: 56,
                         child: ElevatedButton(
@@ -126,17 +111,18 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // Optionnel : feedback visuel
+                              // Feedback visuel
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Email valide !'),
+                                  content: Text('Connexion réussie !'),
                                   backgroundColor: Colors.green,
                                   duration: Duration(seconds: 1),
                                 ),
                               );
 
-                              // Passe à l'étape suivante (CGU = index 1)
-                              widget.onChangedStep?.call(1);
+                              // Passe à l'étape suivante
+                              // 3 = écran principal, dashboard, ou fin du flux
+                              widget.onChangedStep?.call(3);
                             }
                           },
                           child: const Text(
@@ -149,11 +135,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
+
+                const SizedBox(height: 20),
               ],
             ),
           ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:vpn/screen/Guest.dart';
 
-import 'package:vpn/screen/guest/Term.dart';
+
+
+
 
 void main()=> runApp (App());
 
@@ -12,7 +15,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Leadee',
       
-      home: TermScreen(),
+      home: GuestScreen(),
     );
   }
 }
