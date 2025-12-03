@@ -1,7 +1,9 @@
+// lib/screen/guest/GuestScreen.dart
 import 'package:flutter/material.dart';
 import 'package:vpn/screen/guest/Auth.dart';
-import 'package:vpn/screen/guest/Password.dart';
 import 'package:vpn/screen/guest/Term.dart';
+import 'package:vpn/screen/guest/Password.dart';
+import 'package:vpn/screen/guest/home.dart';
 
 class GuestScreen extends StatefulWidget {
   const GuestScreen({Key? key}) : super(key: key);
@@ -11,56 +13,36 @@ class GuestScreen extends StatefulWidget {
 }
 
 class _GuestScreenState extends State<GuestScreen> {
-  late List<Widget> _widgets;
+  late final List<Widget> _screens;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-
-    _widgets = [
-      // Étape 0 : Saisie de l'email
-      AuthScreen(
-        onChangedStep: _changeStep,
-      ),
-
-      // Étape 1 : Conditions Générales d'Utilisation
-      TermScreen(
-        onChangedStep: _changeStep,
-      ),
-
-      // Étape 2 : Mot de passe
-      PasswordScreen(
-        onChangedStep: _changeStep,
-      ),
+    _screens = [
+      AuthScreen(onChangedStep: _changeStep),
+      TermScreen(onChangedStep: _changeStep),
+      PasswordScreen(onChangedStep: _changeStep),
     ];
   }
 
-  // Fonction appelée par chaque écran pour changer d'étape
-  void _changeStep(int newIndex) {
-    if (newIndex >= _widgets.length) {
-      // Fin du flux d'authentification → on va à l'écran principal
+  void _changeStep(int index) {
+    if (index >= _screens.length) {
+      // Authentification terminée → écran principal
       Navigator.pushReplacementNamed(context, '/home');
-      // Ou si tu veux un écran personnalisé :
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       return;
     }
 
-    if (newIndex < 0) return;
+    if (index < 0 || index == _currentIndex) return;
 
-    setState(() {
-      _currentIndex = newIndex;
-    });
+    setState(() => _currentIndex = index);
   }
 
-  // Revenir à l'étape précédente
-  void _previousStep() {
+  void _goBack() {
     if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-      });
+      setState(() => _currentIndex--);
     } else {
-      Navigator.pop(context); // Sortir si on est sur la première étape
+      Navigator.pop(context);
     }
   }
 
@@ -71,56 +53,55 @@ class _GuestScreenState extends State<GuestScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Écran actuel avec animation fluide
+            // Écran courant avec transition fluide
             AnimatedSwitcher(
-              duration: const Duration(milliseconds: 350),
-              switchInCurve: Curves.easeInOut,
-              switchOutCurve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 340),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
               transitionBuilder: (child, animation) {
-                final offsetAnimation = Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation);
+                final isForward = _currentIndex > 
+                    (child.key is ValueKey<int> ? (child.key as ValueKey<int>).value : _currentIndex);
 
-                final reverseAnimation = Tween<Offset>(
-                  begin: const Offset(-1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation);
+                final offset = isForward 
+                    ? const Offset(1.0, 0.0)
+                    : const Offset(-1.0, 0.0);
 
                 return SlideTransition(
-                  position: _currentIndex > (child.key as ValueKey<int>).value
-                      ? offsetAnimation
-                      : reverseAnimation,
+                  position: Tween<Offset>(begin: offset, end: Offset.zero)
+                      .animate(animation),
                   child: child,
                 );
               },
-              child: Container(
+              child: SizedBox(
                 key: ValueKey<int>(_currentIndex),
-                child: _widgets[_currentIndex],
+                width: double.infinity,
+                height: double.infinity,
+                child: _screens[_currentIndex],
               ),
             ),
 
-            // Bouton retour personnalisé (sauf sur l'écran d'accueil email)
+            // Bouton retour stylé (sauf sur l'écran d'email)
             if (_currentIndex > 0)
               Positioned(
-                top: 10,
-                left: 10,
+                top: 12,
+                left: 12,
                 child: SafeArea(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 2),
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    elevation: 8,
+                    shadowColor: Colors.black26,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: _goBack,
+                      child: const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.black87,
+                          size: 22,
                         ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
-                      onPressed: _previousStep,
+                      ),
                     ),
                   ),
                 ),
