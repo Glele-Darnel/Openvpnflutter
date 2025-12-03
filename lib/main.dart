@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vpn/screen/guest/Auth.dart';
+
+import 'package:vpn/screen/guest/Term.dart';
 
 void main()=> runApp (App());
 
@@ -9,9 +10,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Leadee',
       
-      home: AuthScreen(),
+      home: TermScreen(),
     );
   }
 }
