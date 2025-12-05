@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "755309723930",
+    "project_id": "birisvpn",
+    "storage_bucket": "birisvpn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755309723930:android:431aedcfcedf1d7d94aca3",
+        "android_client_info": {
+          "package_name": "com.darneldevelopp.BIRISVPN"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT4RXgrzoNW15ec8mJ63giD8tmJKyIiYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755309723930:android:e36eddeb3167c8fb94aca3",
+        "android_client_info": {
+          "package_name": "com.example.vpn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT4RXgrzoNW15ec8mJ63giD8tmJKyIiYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
